@@ -1,0 +1,128 @@
+{% extends 'nerv/layout.html' %}
+{% load static %}
+
+{% block content %}
+<div class="program-container titanic-container">
+    
+  <h2 class="title-glow">TITANIC SURVIVAL PREDICTION</h2>
+
+  <div class="links-row">
+    {% if github_link %}
+      <a class="nerv-button github" href="{{github_link}}" target="_blank">GITHUB</a>
+    {% else %}
+      <span class="disabled-link">GitHub Repo</span>
+    {% endif %}
+    
+  </div>
+
+
+  <!-- FORM -->
+  <form id="titanic-form" class="predict-form cyber-card" method="post" action="{% url 'nerv:titanic' %}">
+    {% csrf_token %}
+    <div class="form-grid">
+
+      <!-- PCLASS -->
+      <div class="field">
+        {{ form.pclass.label_tag }}
+        <div class="custom-select-container">
+            <div class="custom-select-trigger">
+                Select Class <span class="arrow"></span>
+            </div>
+            <ul class="custom-options">
+                <li class="custom-option" data-value="1">1st Class</li>
+                <li class="custom-option" data-value="2">2nd Class</li>
+                <li class="custom-option" data-value="3">3rd Class</li>
+            </ul>
+        </div>
+        <input type="hidden" name="pclass" id="pclass-hidden">
+      </div>
+
+      <!-- SEX -->
+      <div class="field">
+        {{ form.sex.label_tag }}
+        <div class="custom-select-container">
+            <div class="custom-select-trigger">
+                Select Gender <span class="arrow"></span>
+            </div>
+            <ul class="custom-options">
+                <li class="custom-option" data-value="0">Male</li>
+                <li class="custom-option" data-value="1">Female</li>
+            </ul>
+        </div>
+        <input type="hidden" name="sex" id="sex-hidden">
+      </div>
+
+      <!-- NORMAL FIELDS -->
+      <div class="field">{{ form.age.label_tag }}{{ form.age }}</div>
+      <div class="field">{{ form.sibsp.label_tag }}{{ form.sibsp }}</div>
+      <div class="field last-field">{{ form.parch.label_tag }}{{ form.parch }}</div>
+
+    </div>
+  </form>
+
+  <!-- BUTTONS -->
+  <div style="margin-top:20px;">
+    {% if prediction %}
+        <button type="button" id="clearBtnTitanic" class="cyber-btn btn-clear">CLEAR FORM</button>
+    {% else %}
+        <button type="submit" form="titanic-form" id="predictBtnTitanic" class="cyber-btn decorated-btn">
+            <span class="btn-text">Predict</span>
+        </button>
+    {% endif %}
+  </div>
+
+  <!-- RESULT OVERLAY -->
+<div id="titanic-result-overlay" class="nerv-overlay hidden">
+    <div class="nerv-overlay-card">
+        <h2 id="titanic-result-title" style="cursor:pointer; font-size:1.5em;">Prediction Result</h2>
+        <div id="titanic-result-box" class="prediction-box">
+            <span id="titanic-result-content" class="prediction-box-content" style="font-size:2em; font-weight:bold;"></span>
+        </div>
+        <button id="titanic-clear-overlay" class="cyber-btn btn-clear" style="margin-top: 20px;">CLEAR</button>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("titanic-form");
+    const predictionVal = "{{ prediction|default:''|escapejs }}";
+
+    if (predictionVal) {
+        const overlay = document.getElementById("titanic-result-overlay");
+        const resultBox = document.getElementById("titanic-result-box");
+        const resultContent = document.getElementById("titanic-result-content");
+        const clearOverlayBtn = document.getElementById("titanic-clear-overlay");
+
+        // Set prediction text
+        resultContent.textContent = predictionVal;
+
+        // Apply color block like previous style
+        if (predictionVal === "Survived") {
+            resultBox.classList.add("alert-green");
+            resultBox.classList.remove("alert-red");
+        } else {
+            resultBox.classList.add("alert-red");
+            resultBox.classList.remove("alert-green");
+        }
+
+        overlay.classList.remove("hidden");
+
+        // CLEAR button
+        clearOverlayBtn.addEventListener("click", () => {
+            overlay.classList.add("hidden");
+            form.reset();
+            document.getElementById("pclass-hidden").value = "";
+            document.getElementById("sex-hidden").value = "";
+            const triggers = document.querySelectorAll(".custom-select-trigger");
+            triggers[0].childNodes[0].nodeValue = "Select Class ";
+            triggers[1].childNodes[0].nodeValue = "Select Gender ";
+            window.location.href = window.location.pathname;
+        });
+    }
+});
+</script>
+
+
+
+
+{% endblock %}

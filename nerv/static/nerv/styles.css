@@ -1,0 +1,977 @@
+/* =======================================================
+    NERV BRUTALIST THEME - Base Styles (CSS)
+    ======================================================= */
+
+/* -------------------------
+    Variables (Naming them to match Django template context)
+--------------------------*/
+:root {
+    --bg-color: #151515;       /* Deep charcoal grey */
+    --panel-bg: #1a1a1a;       /* Slightly lighter for panels */
+    --text-main: #b3b3b3;      /* --text-main: #888888;*/
+    --text-muted: #949494;     /* Darker Gray for labels/muted text */
+    
+    /* The main accent color (renamed from accent-orange for NERV theme compatibility) */
+    --eva-orange: #FF4D00;
+    --accent-red: #E74C3C;     /* Warning Red for Abort */
+    --accent-green: #2ecc71;   /* Success Green */
+    
+    /* Borders are very important in this style */
+    --border-color: #333333;
+    --input-bg: #111111;
+    
+    --spacing-unit: 24px;
+}
+
+/* -------------------------
+    Global Reset & Base
+--------------------------*/
+*, *::before, *::after {
+    box-sizing: border-box;
+    border-radius: 0; /* Brutalist style: remove all rounded corners */
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    
+    background-color: var(--bg-color);
+    
+    font-family: 'Space Mono', monospace;
+    color: var(--text-main);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.5;
+}
+
+h1, h2, h3 {
+    font-weight: 1000;
+    margin-top: 0;
+    font-family: 'Space Mono', monospace;
+}
+
+a {
+    transition: color 0.2s ease;
+}
+
+/* -------------------------
+    Custom Scrollbar Styling (Webkit only - Chrome, Safari, newer Edge)
+--------------------------*/
+/* Scrollbar track */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+/* Scrollbar handle (the moving part) */
+::-webkit-scrollbar-thumb {
+    background-color: var(--text-muted); /* Dark grey handle */
+    border: 1px solid var(--bg-color); /* Separator from the track */
+    transition: background-color 0.2s ease;
+}
+
+/* Scrollbar handle hover effect */
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--eva-orange); /* Orange on hover */
+}
+
+/* Scrollbar track */
+::-webkit-scrollbar-track {
+    background-color: var(--input-bg); /* Very dark background for the track */
+}
+
+/* Input[type="number"] scroll buttons */
+/* Hide the default buttons but keep their space to customize appearance */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    width: 15px; /* Adjust width of the invisible area */
+    opacity: 1.5; /* Keeping them slightly visible */
+    background: transparent;
+    border-left: 1px solid var(--border-color);
+}
+
+.title {
+    font-size: 3rem;
+    margin-bottom: 0;
+    
+    /* --- NERV BOX STYLES --- */
+    position: relative;
+    border: 1px solid transparent;
+    background-color: transparent;
+    
+    display: flex; /* Enable Flexbox */
+    align-items: center; /* Vertical centering */
+    padding: 8px 15px; /* Small vertical padding, large horizontal padding */
+    width: 100%; /* Ensure it takes full width of parent (minus parent padding) */
+    
+    overflow: hidden;
+    cursor: pointer;
+    z-index: 1;
+    /* --- END NERV BOX STYLES --- */
+}
+
+/* Glitch Animation Keyframes for TEXT (for Sidebar) */
+@keyframes glitch {
+    0% {
+        text-shadow: 2px 0 var(--accent-red), -2px 0 var(--accent-green);
+        transform: translate(0, 0);
+    }
+    20% {
+        text-shadow: -2px 0 var(--accent-red), 2px 0 var(--accent-green);
+        transform: translate(-1px, 1px);
+    }
+    40% {
+        text-shadow: 4px 0 var(--accent-red), -4px 0 var(--accent-green);
+        transform: translate(2px, -2px);
+    }
+    60% {
+        text-shadow: -4px 0 var(--accent-red), 4px 0 var(--accent-green);
+        transform: translate(-2px, 2px);
+    }
+    80% {
+        text-shadow: 0 4px var(--accent-red), 0 -4px var(--accent-green);
+        transform: translate(1px, 1px);
+    }
+    100% {
+        text-shadow: 0 0 var(--accent-red), 0 0 var(--accent-green);
+        transform: translate(0, 0);
+    }
+}
+
+/* Background Hatch Movement Keyframes for 45deg tilt (Used by sidebar and result box) */
+@keyframes moving-hatch {
+    from { background-position: 0 0; }
+    to { background-position: 8px 8px; }
+}
+
+
+/* 1. CONTINUOUS BACKGROUND GLITCH (HATCH LINES) - Sidebar */
+.title::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    
+    /* 45 degree tilt and denser lines (2px orange, 6px transparent) */
+    background: repeating-linear-gradient(
+        45deg,
+        var(--eva-orange) 0px,
+        var(--eva-orange) 2px,
+        transparent 2px,
+        transparent 8px
+    );
+    background-size: 8px 8px;
+    opacity: 0.3;
+    z-index: -1;
+    animation: moving-hatch 1s linear infinite;
+    transition: opacity 0.3s ease, background 0.3s ease;
+}
+
+/* 2. Text (A element) - Stable and White by default */
+.title a {
+    color: #EEEEEE;
+    text-decoration: none;
+    display: block; /* Important for full click area */
+    position: relative;
+    transition: all 0.3s ease;
+    text-shadow: none;
+}
+
+/* 3. HOVER LOGIC - Sidebar */
+
+/* A. Stop background glitch and show solid color on hover */
+.title:hover::before {
+    animation: none;
+    opacity: 0.1;
+    background: var(--eva-orange);
+}
+
+/* B. Start text glitch on hover */
+.title:hover a {
+    color: var(--text-main);
+    animation: glitch 0.3s infinite alternate;
+}
+
+
+/* 4. Underline for the Title - Hidden initially, shown on hover */
+.title::after {
+    content: '';
+    /* FIX: Use absolute positioning to place the underline at the bottom */
+    position: absolute;
+    left: 15px; /* Aligns with the left padding */
+    bottom: 5px; /* Distance from the bottom of the NERV box */
+    
+    width: 0;
+    height: 4px;
+    background: var(--eva-orange);
+    transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    
+    /* Remove unnecessary margin properties */
+    margin: 0;
+}
+
+.title:hover::after {
+    width: 92px;
+}
+
+
+
+
+
+/* -------------------------
+    Sidebar (Left Menu)
+--------------------------*/
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: rgba(10, 10, 10, 0.3);
+    border-right: 1px solid var(--border-color);
+    padding: 40px 30px;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.sidebar-title {
+    font-size: 1.8rem;
+    font-weight: 900;
+    margin-bottom: 0;
+    
+    /* --- NERV BOX STYLES --- */
+    position: relative;
+    border: 1px solid transparent;
+    background-color: transparent;
+    
+    display: flex; /* Enable Flexbox */
+    align-items: center; /* Vertical centering */
+    padding: 8px 15px; /* Small vertical padding, large horizontal padding */
+    width: 100%; /* Ensure it takes full width of parent (minus parent padding) */
+    
+    overflow: hidden;
+    cursor: pointer;
+    z-index: 1;
+    /* --- END NERV BOX STYLES --- */
+}
+
+/* Glitch Animation Keyframes for TEXT (for Sidebar) */
+@keyframes glitch {
+    0% {
+        text-shadow: 2px 0 var(--accent-red), -2px 0 var(--accent-green);
+        transform: translate(0, 0);
+    }
+    20% {
+        text-shadow: -2px 0 var(--accent-red), 2px 0 var(--accent-green);
+        transform: translate(-1px, 1px);
+    }
+    40% {
+        text-shadow: 4px 0 var(--accent-red), -4px 0 var(--accent-green);
+        transform: translate(2px, -2px);
+    }
+    60% {
+        text-shadow: -4px 0 var(--accent-red), 4px 0 var(--accent-green);
+        transform: translate(-2px, 2px);
+    }
+    80% {
+        text-shadow: 0 4px var(--accent-red), 0 -4px var(--accent-green);
+        transform: translate(1px, 1px);
+    }
+    100% {
+        text-shadow: 0 0 var(--accent-red), 0 0 var(--accent-green);
+        transform: translate(0, 0);
+    }
+}
+
+/* Background Hatch Movement Keyframes for 45deg tilt (Used by sidebar and result box) */
+@keyframes moving-hatch {
+    from { background-position: 0 0; }
+    to { background-position: 8px 8px; }
+}
+
+
+/* 1. CONTINUOUS BACKGROUND GLITCH (HATCH LINES) - Sidebar */
+.sidebar-title::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    
+    /* 45 degree tilt and denser lines (2px orange, 6px transparent) */
+    background: repeating-linear-gradient(
+        45deg,
+        var(--eva-orange) 0px,
+        var(--eva-orange) 2px,
+        transparent 2px,
+        transparent 8px
+    );
+    background-size: 8px 8px;
+    opacity: 0.8;
+    z-index: -1;
+    animation: moving-hatch 1s linear infinite;
+    transition: opacity 0.3s ease, background 0.3s ease;
+}
+
+/* 2. Text (A element) - Stable and White by default */
+.sidebar-title a {
+    color: #EEEEEE;
+    text-decoration: none;
+    display: block; /* Important for full click area */
+    position: relative;
+    transition: all 0.3s ease;
+    text-shadow: none;
+}
+
+/* 3. HOVER LOGIC - Sidebar */
+
+/* A. Stop background glitch and show solid color on hover */
+.sidebar-title:hover::before {
+    animation: none;
+    opacity: 0.1;
+    background: var(--eva-orange);
+}
+
+/* B. Start text glitch on hover */
+.sidebar-title:hover a {
+    color: var(--text-main);
+    animation: glitch 0.3s infinite alternate;
+}
+
+
+/* 4. Underline for the Title - Hidden initially, shown on hover */
+.sidebar-title::after {
+    content: '';
+    /* FIX: Use absolute positioning to place the underline at the bottom */
+    position: absolute;
+    left: 15px; /* Aligns with the left padding */
+    bottom: 5px; /* Distance from the bottom of the NERV box */
+    
+    width: 0;
+    height: 4px;
+    background: var(--eva-orange);
+    transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    
+    /* Remove unnecessary margin properties */
+    margin: 0;
+}
+
+.sidebar-title:hover::after {
+    width: 40px;
+}
+
+
+.sidebar-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Sidebar links are BOLD and natural case */
+.sidebar-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 1.2rem;
+    padding: 12px 0;
+    border-bottom: 1px solid transparent;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    display: flex;
+    align-items: center;
+    font-weight: 900;
+}
+
+.sidebar-links a:hover {
+    color: var(--eva-orange);
+    padding-left: 35px;
+}
+
+.sidebar-links a::before {
+    content: '→';
+    position: absolute;
+    left: -20px;
+    opacity: 0;
+    color: var(--eva-orange);
+    transition: all 0.2s ease;
+}
+
+.sidebar-links a:hover::before {
+    left: 0;
+    opacity: 1;
+}
+
+/* -------------------------
+    Main Content Area
+--------------------------*/
+.main-content {
+    margin-left: 260px;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0px 60px;
+    
+    background-image: linear-gradient(var(--border-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: -1px -1px;
+}
+
+/* -------------------------
+    Sidebar Footer
+--------------------------*/
+.sidebar-footer {
+    margin-top: auto; /* Pushes the footer to the bottom of the flex container (sidebar) */
+    
+    background: transparent;
+    border-top: 1px solid var(--border-color);
+    padding-top: 12px;
+    padding-bottom: 0;
+    text-align: left; /* Align text left, consistent with sidebar content */
+    color: #bdbdbd;
+    font-size: 0.85rem; /* Retained font size */
+    line-height: 1.5;
+    
+    /* Ensure it respects sidebar padding */
+    width: 100%;
+    position: relative; /* Remove fixed positioning */
+}
+
+.sidebar-footer a {
+    color: var(--eva-orange);
+    font-weight: 900;
+    text-decoration: none;
+}
+
+/* -------------------------
+    Program Container (Wrapper for content blocks)
+--------------------------*/
+.program-container {
+    width: 100%;
+    max-width: 800px;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    padding: 25px 60px;
+    position: relative;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    
+    /* CRT Glow Effect and Retaining Original Shadow */
+    box-shadow:
+        inset 0px 0px 2rem rgba(255, 77, 0, 0.3),
+        20px 20px 0px rgba(0,0,0,0.4);
+
+    /* Scanline Effect */
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 1) 50%);
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 1) 50%);
+    mask-size: 100% 2px;
+
+    z-index: 10;
+}
+
+/* -------------------------
+    Form & Input Styles
+--------------------------*/
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+label {
+    display: block;
+    font-size: 1rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    font-weight: 900;
+}
+
+input:not([type="checkbox"]):not([type="radio"]),
+textarea,
+.custom-select-trigger {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    padding: 14px 20px;
+    color: #bdbdbd;
+    font-family: inherit;
+    font-size: 0.88rem;
+    transition: all 0.3s ease;
+    font-weight: 700;
+}
+
+input:focus, textarea:focus, .custom-select-container.open .custom-select-trigger {
+    outline: none;
+    border-color: var(--eva-orange);
+    background: #1e1e1e;
+    border-left: 4px solid var(--eva-orange);
+    padding-left: 16px;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 120px;
+    overflow: auto; /* Ensure custom scrollbar applies */
+}
+
+::placeholder {
+    color: #444;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+/* Custom Dropdown Styles (Must be included here for global use) */
+.custom-select-container {
+    position: relative;
+}
+
+.custom-select-trigger {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.custom-select-trigger .arrow {
+    border: solid var(--eva-orange);
+    border-width: 0 2px 2px 0;
+    display: inline-block;
+    padding: 4px;
+    transform: rotate(45deg);
+    transition: transform 0.2s ease;
+}
+
+.custom-select-container.open .custom-select-trigger .arrow {
+    transform: rotate(-135deg);
+}
+
+.custom-options {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: var(--input-bg);
+    border: 1px solid var(--eva-orange);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+}
+
+.custom-select-container.open .custom-options {
+    display: block;
+}
+
+/* Dropdown options are BOLD and natural case */
+.custom-option {
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: background 0.1s ease;
+    font-size: 1rem;
+    font-weight: 900;
+}
+
+.custom-option:hover,
+.custom-option.selected {
+    background: var(--eva-orange);
+    color: var(--bg-color);
+}
+
+/* -------------------------
+    Prediction Result Box (Common component across all apps)
+    --- STYLED AS NERV BOX ---
+--------------------------*/
+.prediction-box {
+    background: var(--panel-bg);
+    padding: 0px 30px;
+    margin-top: 30px;
+    
+    font-size: 1.8rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-align: center;
+    
+    position: relative;
+    overflow: hidden;
+    box-shadow: 20px 20px 0px rgba(0,0,0,0.4);
+    z-index: 10;
+    
+    /* Base style for border color (default red in HTML, overridden by JS to green on success) */
+    border: 1px solid;
+    color: var(--accent-red);
+    border-color: var(--accent-red);
+}
+
+/* Success State */
+.prediction-box.alert-green {
+    color: var(--accent-green);
+    border-color: var(--accent-green);
+}
+
+/* Result Box Glitch/Hatch Lines - Uses currentColor for the lines, picking up the box's state color */
+.prediction-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    
+    /* Hatch lines: uses currentColor for the lines, picking up the box's text/border color */
+    background: repeating-linear-gradient(
+        45deg,
+        currentColor 0px,
+        currentColor 1px,
+        transparent 1px,
+        transparent 5px
+    );
+    background-size: 5px 5px;
+    opacity: 1;
+    z-index: 0;
+    animation: moving-hatch 1.5s linear infinite;
+}
+
+/* Ensure prediction text sits on top of the hatch pattern */
+.prediction-box .prediction-box-content {
+    position: relative;
+    z-index: 1;
+    display: block;
+}
+
+/* -------------------------
+    Buttons / Cyber-btn
+--------------------------*/
+button, .cyber-btn {
+    background: transparent;
+    border: 1px solid var(--text-main);
+    padding: 18px 32px;
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.3s, transform 0.3s ease-out, opacity 0.3s;
+    width: 100%;
+    display: block;
+}
+
+.decorated-btn {
+    border-color: var(--eva-orange);
+    color: var(--eva-orange);
+    
+}
+
+/* Animated text inside the button for PREDICT state */
+@keyframes subtle-glitch {
+    0% { transform: translate(0.5px, -0.5px); text-shadow: 1px 0 var(--accent-red); }
+    50% { transform: translate(-0.5px, 0.5px); text-shadow: -1px 0 var(--accent-green); }
+    100% { transform: translate(0.5px, -0.5px); text-shadow: 1px 0 var(--accent-red); }
+}
+
+.decorated-btn .btn-text {
+    display: block;
+    position: relative;
+    z-index: 2;
+    animation: subtle-glitch 0.8s infinite alternate;
+    
+}
+
+
+button::before, .cyber-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--eva-orange);
+    opacity: 1.15;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s ease;
+    z-index: -1;
+}
+
+.decorated-btn::before {
+    background: repeating-linear-gradient(
+        45deg,
+        rgba(255, 77, 0, 0.1),
+        rgba(255, 77, 0, 0.1) 1px,
+        transparent 10px,
+        transparent 10px
+        
+    );
+    opacity: 1;
+}
+
+button:hover, .cyber-btn:hover {
+    color: var(--eva-orange);
+    border-color: var(--eva-orange);
+    box-shadow: none;
+}
+
+button:hover::before, .cyber-btn:hover::before {
+    transform: scaleX(1);
+}
+
+.decorated-btn:hover {
+    /* Keep the hover effect but remove the constant glitch effect */
+    transform: translate(3px, -3px) skewX(0.5deg);
+    color: var(--eva-orange);
+}
+
+.btn-clear {
+    margin-top: 0; /* Remove top margin since this replaces the predict button */
+    border-color: var(--eva-orange);
+    color: var(--eva-orange);
+    transform: none !important;
+}
+
+.btn-clear::before {
+    background: repeating-linear-gradient(
+        45deg,
+        rgba(255, 77, 0, 0.1),
+        rgba(255, 77, 0, 0.1) 1px,
+        transparent 1px,
+        transparent 5px
+    );
+    opacity: 1;
+}
+
+
+/* Corner Decoration (retained from previous example) */
+.decorated-btn .corner {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-size: 100% 100%;
+    image-rendering: pixelated;
+    transition: transform 0.3s ease-out;
+}
+
+/* Corner SVGs are now included directly in the CSS using data URLs */
+.decorated-btn .top-left { top: -1px; left: -1px; background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'><path d='M 10 0 L 10 1 L 1 1 L 1 10 L 0 10 L 0 0 Z' fill='%23FF4D00'></path></svg>"); }
+.decorated-btn .top-right { top: -1px; right: -1px; background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'><path d='M 10 10 L 9 10 L 9 1 L 0 1 L 0 0 L 10 0 Z' fill='%23FF4D00'></path></svg>"); }
+.decorated-btn .bottom-left { bottom: -1px; left: -1px; background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'><path d='M 0 0 L 1 0 L 1 9 L 10 9 L 10 10 L 0 10 Z' fill='%23FF4D00'></path></svg>"); }
+.decorated-btn .bottom-right { bottom: -1px; right: -1px; background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'><path d='M 0 10 L 0 9 L 9 9 L 9 0 L 10 0 L 10 10 Z' fill='%23FF4D00'></path></svg>"); }
+
+
+/* -------------------------
+    Responsive Adjustments
+--------------------------*/
+@media (max-width: 768px) {
+    
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 20px;
+        gap: 20px;
+        background: var(--bg-color);
+    }
+    .sidebar-title::after {
+        margin-top: 10px;
+    }
+    .sidebar-links {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    .sidebar-links a {
+        padding: 5px 0;
+        font-size: 0.9rem;
+    }
+    .sidebar-links a::before {
+        display: none;
+    }
+    .sidebar-links a:hover {
+        padding-left: 0;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 20px;
+        display: block;
+        padding-bottom: 20px;
+    }
+    .program-container {
+        padding: 30px 20px;
+        box-shadow: none;
+        border-left: none;
+        border-right: none;
+    }
+
+    .sidebar-footer {
+        margin-top: 20px;
+        border-top: none;
+        padding-top: 0;
+        text-align: center;
+        position: relative; /* Change fixed to relative on mobile */
+    }
+}
+
+.iris-image-box {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.iris-image-box img {
+    width: 220px;
+    height: auto;
+    border-radius: 1px;
+    border: 2px solid rgba(255,255,255,0.25);
+    box-shadow: 0 0 20px rgba(0,255,255,0.2);
+}
+
+.iris-container {
+    position: relative;
+}
+.iris-container, 
+.program-container {
+    position: relative;
+}
+
+/* -----------------------------------------
+   FALLOUT-STYLE WARNING STATEMENT (Fixed)
+------------------------------------------*/
+.statement {
+    
+    margin: 30px 0;
+    background: transparent; /* faint hazard tint */
+    padding: 0;
+    font-size: 1rem;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+/* HEADER STRIP */
+.statement-header {
+    background: var(--warning-border);
+    color: #ff0000;
+    padding: 12px 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+}
+
+/* ICON */
+.statement-header span {
+    font-size: 1.5rem;
+    margin-right: 10px;
+    color: #ffb300; /* warm amber */
+}
+
+/* BODY */
+.statement-body {
+    padding: 1px 18px;
+    padding-bottom: 2px;
+    color: #888888; /* softer amber for text */
+    font-weight: 700;
+}
+
+/* TEXT */
+.statement-body p {
+    margin: 6px 0;
+}
+
+.statement-body strong {
+    color: #ff0000;
+    font-weight: 1000;
+    text-align: left;
+}
+
+/* CLASS LIST */
+.statement-list {
+    color: #ffb300;
+    text-align: left;
+    font-size: 1rem;
+    line-height: 1.55;
+    text-align: center;
+    margin-top: 12px;
+    opacity: 1;
+}
+
+/* Specific style for the GitHub button, using the green accent */
+    .nerv-button.github {
+        font-size: 1rem;
+        font-weight: 700;
+        text-decoration: none;
+    /* border-color: var(--accent-green); */
+    /* background: rgba(46, 204, 113, 0.1); */
+    color: var(--accent-green);
+    /* box-shadow: 0 0 10px rgba(46, 204, 113, 0.4); */
+    padding: 5px 0px;
+    display: inline-block;
+    border-radius: 0.1rem;
+}
+    .nerv-button.github:hover {
+    background: var(--accent-green);
+    color: var(--bg-color);
+    box-shadow: 0 0 10px var(--accent-green);
+}
+
+.links-row .nerv-button.github {
+    margin-bottom: 15px;
+}
+
+.nerv-popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.nerv-content {
+    background: #0f0f0f;
+    border: 2px solid #ff4d00;
+    box-shadow: 0 0 20px #ff4d00aa;
+    padding: 0px 30px;
+    width: 320px;
+    color: #ff4d00;
+    font-family: sans-serif;
+    text-align: center;
+    border-radius: 8px;
+}
+
+.nerv-content h2 {
+    margin-top: 0;
+    font-size: 20px;
+    color: #ff4d00;
+}
+
+#nerv-close-btn {
+    background: #ff4d00;
+    color: #000;
+    border: none;
+    padding: 8px 16px;
+    margin-top: 15px;
+    cursor: pointer;
+    font-weight: 900;
+    border-radius: 5px;
+}

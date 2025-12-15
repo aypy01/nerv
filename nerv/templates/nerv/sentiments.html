@@ -1,0 +1,62 @@
+{% extends 'nerv/layout.html' %}
+{% load static %}
+
+{% block content %}
+<div class="program-container">
+  <h2 class="title-glow">YAPPER [v.0.1 ]</h2>
+
+  <div class="links-row">
+    {% if github_link %}
+      <a class="nerv-button github" href="{{github_link}}" target="_blank">GITHUB</a>
+    {% else %}
+      <span class="disabled-link">GitHub Repo</span>
+    {% endif %}
+    
+  </div>
+
+  <form id="yapper-form" class="predict-form" method="post" action="{% url 'nerv:sentiments' %}">
+    {% csrf_token %}
+    <div class="form-grid">
+      <div class="last-field">{{ form.as_p }}</div>
+    </div>
+
+    <div style="margin-top:20px;">
+
+      {% if prediction %}
+        <!-- CLEAR BUTTON AFTER PREDICTION -->
+        <button type="button" id="clearBtn" class="cyber-btn btn-clear">
+          <span class="btn-text">Clear Form</span>
+        </button>
+      {% else %}
+        <!-- DECORATED THEMED ANALYZE BUTTON -->
+        <button type="submit" id="predictBtnYapper" class="cyber-btn decorated-btn">
+          <span class="btn-text">Analyze</span>
+        </button>
+      {% endif %}
+
+    </div>
+  </form>
+
+
+{% if prediction %}
+  <div class="prediction-box {% if prediction == 'Positive' %}alert-green{% else %}alert-red{% endif %}">
+      <span class="prediction-box-content">{{ prediction }}</span>
+  </div>
+{% endif %}
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const clearBtn = document.getElementById("clearBtn");
+    const form = document.getElementById("yapper-form");
+
+    if (clearBtn) {
+        clearBtn.addEventListener("click", () => {
+            form.reset();
+            window.location.href = window.location.pathname;
+        });
+    }
+});
+</script>
+
+{% endblock %}

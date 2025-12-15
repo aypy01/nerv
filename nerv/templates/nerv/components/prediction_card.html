@@ -1,0 +1,21 @@
+
+{% if prediction %}
+<div class="predict-card">
+  
+  <div class="predict-header">
+    <h3>Prediction Result</h3>
+  </div>
+
+  <div class="predict-body">
+    <p class="predict-label">Detected:</p>
+    <p class="predict-value">{{ prediction }}</p>
+  </div>
+
+  {% if extra_details %}
+  <div class="predict-extra">
+      {{ extra_details|safe }}
+  </div>
+  {% endif %}
+
+</div>
+{% endif %}

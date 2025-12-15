@@ -1,0 +1,550 @@
+{% extends 'nerv/layout.html' %}
+{% load static %}
+
+{% block title %}NERV:CONTROL{% endblock %}
+
+{% block content %}
+<!-- Three.js CDN for the 3D Blueprints -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<style>
+    /* =========================================
+       GAME MENU STYLES (Integrated)
+    ========================================= */
+    
+    .game-menu-wrapper {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 1400px; /* Increased max-width for better desktop use */
+        /* Fit within the view, subtracting top margin */
+        height: calc(100vh - 40px); 
+        gap: 20px;
+        margin-top: 20px;
+        font-family: 'Space Mono', monospace;
+    }
+
+    /* --- HEADER SECTION --- */
+    .mission-header {
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 10px;
+        position: relative;
+        flex-shrink: 0; /* Prevent header from shrinking */
+    }
+
+    .main-title-large {
+        font-size: 3.5rem; /* Slightly smaller to save space */
+        line-height: 1;
+        margin: 0;
+        color: #ffffff;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        text-shadow: 2px 0 var(--accent-red), -2px 0 var(--accent-green);
+    }
+
+    .mission-sub {
+        font-size: 0.9rem;
+        color: var(--eva-orange);
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        margin-left: 5px;
+    }
+
+    /* --- INTRO / BRIEFING --- */
+    .mission-brief-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        margin-top: 10px;
+        padding: 10px 15px;
+        background: rgba(255, 77, 0, 0.05);
+        border-left: 2px solid var(--eva-orange);
+    }
+
+    .brief-text {
+        color: var(--text-main);
+        font-size: 0.88rem;
+        max-width: 70%;
+        line-height: 1.3;
+    }
+
+    .quote-box {
+        text-align: right;
+        font-style: italic;
+        color: var(--text-muted);
+        font-size: 2.75rem;
+        border-right: 2px solid var(--text-muted);
+        padding-right: 15px;
+    }
+
+    /* --- SPLIT INTERFACE --- */
+    .interface-grid {
+        display: grid;
+        /* Sidebar fixed width, Viewport takes rest */
+        grid-template-columns: 350px 1fr; 
+        gap: 20px;
+        flex-grow: 1;
+        min-height: 0; /* Critical for nested scrolling */
+        overflow: hidden; /* Prevent outer scroll */
+    }
+
+    /* --- LEFT: NAVIGATION --- */
+    .nav-column {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        overflow-y: auto; /* Independent scrolling for menu */
+        padding-right: 10px; /* Space for scrollbar */
+        height: 100%;
+    }
+
+    /* Scrollbar for nav */
+    .nav-column::-webkit-scrollbar { width: 4px; }
+    .nav-column::-webkit-scrollbar-thumb { background-color: var(--eva-orange); }
+
+    .nav-item {
+        background: var(--panel-bg);
+        border: 1px solid var(--border-color);
+        padding: 15px 20px;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-decoration: none;
+        flex-shrink: 0; /* Prevent items from squishing */
+    }
+
+    .nav-item:hover, .nav-item.active {
+        border-color: var(--eva-orange);
+        background: rgba(255, 77, 0, 0.1);
+        transform: translateX(5px);
+    }
+
+    .nav-item::before {
+        content: '';
+        position: absolute;
+        left: 0; top: 0; bottom: 0;
+        width: 3px;
+        background: transparent;
+        transition: background 0.2s;
+    }
+
+    .nav-item:hover::before, .nav-item.active::before {
+        background: var(--eva-orange);
+    }
+
+    .nav-title {
+        color: #b3b3b3;
+        font-size: 1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .nav-meta {
+        color: var(--text-muted);
+        font-size: 0.7rem;
+        margin-top: 5px;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .nav-item:hover .nav-meta { color: var(--eva-orange); }
+
+    .nav-item.github { margin-top: auto; border-style: dashed; }
+
+    /* --- RIGHT: 3D VIEWPORT --- */
+    .viewport-column {
+        position: relative;
+        border: 1px solid var(--border-color);
+        background: #000;
+        overflow: hidden;
+        box-shadow: inset 0px 0px 2rem rgba(255, 77, 0, 0.2);
+        height: 100%; /* Fill available height */
+    }
+
+    .viewport-scanlines {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 10;
+        background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
+        background-size: 100% 4px;
+        animation: scanline 10s linear infinite;
+        opacity: 0.6;
+    }
+
+    #blueprint-canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+
+    .viewport-info {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 30px;
+        background: linear-gradient(to top, var(--bg-color) 0%, transparent 100%);
+        z-index: 20;
+        pointer-events: none;
+    }
+
+    .info-title {
+        font-size: 2.5rem;
+        color: var(--eva-orange);
+        margin: 0;
+        text-transform: uppercase;
+        text-shadow: 0 0 10px rgba(255, 77, 0, 0.4);
+    }
+
+    .info-desc {
+        color: var(--text-main);
+        margin-top: 10px;
+        font-size: 0.9rem;
+        max-width: 80%;
+        line-height: 1.5;
+        border-left: 2px solid var(--text-muted);
+        padding-left: 15px;
+    }
+
+    .corner {
+        position: absolute;
+        width: 10px; height: 10px;
+        border: 2px solid var(--eva-orange);
+        z-index: 30;
+    }
+    .tl { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+    .tr { top: 10px; right: 10px; border-left: none; border-bottom: none; }
+    .bl { bottom: 10px; left: 10px; border-right: none; border-top: none; }
+    .br { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+
+    @keyframes scanline {
+        0% { background-position: 0% 0%; }
+        100% { background-position: 0% 100%; }
+    }
+
+    @media (max-width: 900px) {
+        .game-menu-wrapper { height: auto; } /* Allow scrolling on mobile */
+        .interface-grid { grid-template-columns: 1fr; height: auto; overflow: visible; }
+        .viewport-column { height: 400px; order: -1; }
+        .nav-column { overflow-y: visible; height: auto; }
+    }
+</style>
+
+<div class="game-menu-wrapper">
+    
+    <!-- HEADER -->
+    <header class="mission-header">
+    <h1 class="title"><a href="{% url 'nerv:index' %}" style="color:inherit;text-decoration:none;">NERV</a></h2>
+        <div class="mission-brief-container">
+            <div class="brief-text">
+                <strong>OBJECTIVE:</strong> Fill the required fields and run predictions using trained models.
+                <br>
+                <span style="color:var(--text-muted); font-size:1rem; font-weight: 1000;">
+    STATUS: SYSTEM <strong style="color:#2ecc71;">READY</strong> &nbsp;//&nbsp;Awaiting input
+</span>
+
+            </div>
+            
+        </div>
+    </header>
+
+    <!-- INTERFACE -->
+    <div class="interface-grid">
+        
+        <!-- LEFT: NAVIGATION (Scrollable) -->
+        <nav class="nav-column">
+            
+            <a href="{% url 'nerv:titanic' %}" class="nav-item active" 
+               data-model="titanic"
+               data-title="Titanic"
+               data-desc="Titanic Survival predictor. Neural network classifier predicts passenger survival from historical socioeconomic data.">
+                <span class="nav-title">TITANIC</span>
+                <span class="nav-meta">Class: Binary Classification </span>
+            </a>
+
+            <a href="{% url 'nerv:iris' %}" class="nav-item" 
+               data-model="iris"
+               data-title="Iris "
+               data-desc="Biological pattern recognition. Neural network distinguishes Setosa, Versicolor, and Virginica species from normalized feature data">
+                <span class="nav-title">IRIS</span>
+                <span class="nav-meta">Class: Multiclass Classification</span>
+            </a>
+
+            <a href="{% url 'nerv:image_classification' %}" class="nav-item" 
+               data-model="oculus"
+               data-title="Oculus"
+               data-desc="Convolutional Neural Networks (CNN) deployed for high-speed image categorization and object detection.">
+                <span class="nav-title">OCULUS</span>
+                <span class="nav-meta">Class: Convolution Neural Network [CNN]</span>
+            </a>
+
+            <a href="{% url 'nerv:sentiments' %}" class="nav-item" 
+               data-model="yapper"
+               data-title="Yapper"
+               data-desc="Linguistic sentiment extraction engine. Processes natural language inputs to derive emotional polarity and subjective context.">
+                <span class="nav-title">YAPPER</span>
+                <span class="nav-meta">Class: Natural Language Processing [NLP]</span>
+            </a>
+            <a href="https://github.com/aypy01/tensorflow" target="_blank" class="nav-item github"
+               data-model="github"
+               data-title="Source Code"
+               data-desc="Open Source Link: Access to the central repository. Explore full source code link to the Central Repository. View architecture diagrams, source code, and contribution guidelines.">
+                <span class="nav-title">GITHUB REPO</span>
+                <span class="nav-meta">External Link // Access Granted</span>
+            </a>
+            
+
+            <!-- <a href="#" class="nav-item" style="opacity:0.5; cursor:default;">
+                <span class="nav-title">System 05 (Locked)</span>
+                <span class="nav-meta">Class: Unknown // Status: Offline</span>
+            </a>-->
+
+            
+
+        </nav>
+
+        <!-- RIGHT: VIEWPORT (Fixed) -->
+        <div class="viewport-column">
+            <div class="corner tl"></div>
+            <div class="corner tr"></div>
+            <div class="corner bl"></div>
+            <div class="corner br"></div>
+            <div class="viewport-scanlines"></div>
+
+            <div id="blueprint-canvas"></div>
+
+            <div class="viewport-info">
+                <h2 class="info-title" id="info-title">Titanic</h2>
+                <p class="info-desc" id="info-desc">Titanic Survival predictor. Neural network classifier predicts passenger survival from historical socioeconomic data.</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const container = document.getElementById('blueprint-canvas');
+    const scene = new THREE.Scene();
+    
+    const aspect = container.clientWidth / container.clientHeight;
+    const d = 12;
+    const camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, 1, 1000);
+    camera.position.set(20, 20, 20);
+    camera.lookAt(scene.position);
+
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
+
+    let currentMesh = null;
+    let animationFrameId;
+
+    const wireMaterial = new THREE.MeshBasicMaterial({ 
+        color: 0xFF4D00, 
+        wireframe: true,
+        transparent: true,
+        opacity: 0.5
+    });
+
+    // --- BETTER TITANIC GEOMETRY ---
+    function genTitanic() {
+        const group = new THREE.Group();
+        
+        // Hull dimensions
+        const L = 16; // Length increased
+        const W = 3.5;  // Width increased
+        const H = 2; // Height increased
+
+        // 1. Main Hull (Deep V-shaped hull)
+        const hullGeo = new THREE.BoxGeometry(W, H, L, 1, 1, 10); // More segments for smoother taper
+        
+        const posAttribute = hullGeo.attributes.position;
+        const bowTaperZ = L * 0.35; // Start tapering later, making the front longer
+        
+        for (let i = 0; i < posAttribute.count; i++) {
+            const z = posAttribute.getZ(i);
+            const x = posAttribute.getX(i);
+            const y = posAttribute.getY(i);
+            
+            // --- Bow Taper (Front: Z > 0) ---
+            if (z > L / 2 - bowTaperZ) {
+                // Taper factor: 0 at the nose (L/2), 1 at the start of the taper
+                const taperFactor = (L / 2 - z) / bowTaperZ; 
+                const newX = x * Math.max(0.05, taperFactor); // Taper X width
+                posAttribute.setX(i, newX);
+            }
+            
+            // --- Keel V-Shape (Bottom: Y < 0) ---
+            if (y < 0) {
+                // Lower the center point to create a V or U shape for the hull bottom
+                const centerWeight = Math.abs(x) / (W / 2); // 0 at center (x=0), 1 at sides (x=W/2)
+                const lowerFactor = 0.5 * (1 - centerWeight); // Lower center more
+                posAttribute.setY(i, y - lowerFactor * 0.5);
+            }
+        }
+        hullGeo.computeVertexNormals();
+        const hull = new THREE.Mesh(hullGeo, wireMaterial);
+        hull.position.y = -1.5; // Sink half the hull below the center line
+        group.add(hull);
+
+        // 2. Main Deck Superstructure - First Tier (Wider)
+        const deck1H = 0.8;
+        const deck1Geo = new THREE.BoxGeometry(W * 0.9, deck1H, L * 0.7);
+        const deck1 = new THREE.Mesh(deck1Geo, wireMaterial);
+        deck1.position.y = deck1H / 2 + 0.2; // Rests on top of the visible hull
+        deck1.position.z = L * 0.05; 
+        group.add(deck1);
+
+        // 3. Deck Superstructure - Second Tier (Narrower)
+        const deck2H = 0.6;
+        const deck2Geo = new THREE.BoxGeometry(W * 0.7, deck2H, L * 0.5);
+        const deck2 = new THREE.Mesh(deck2Geo, wireMaterial);
+        deck2.position.y = deck1.position.y + deck1H / 2 + deck2H / 2;
+        deck2.position.z = L * 0.1;
+        group.add(deck2);
+
+        // 4. Bridge/Pilot House (Front structure)
+        const bridgeGeo = new THREE.BoxGeometry(W * 0.5, 0.4, L * 0.1);
+        const bridge = new THREE.Mesh(bridgeGeo, wireMaterial);
+        bridge.position.y = deck2.position.y + deck2H / 2 + 0.2;
+        bridge.position.z = L * 0.4;
+        group.add(bridge);
+        
+        // 5. Funnels/Stacks (Two stacks for a Liner look)
+        const stackGeo = new THREE.CylinderGeometry(0.35, 0.35, 2, 8);
+        
+        const stack1 = new THREE.Mesh(stackGeo, wireMaterial);
+        stack1.position.y = bridge.position.y + 1.2;
+        stack1.position.z = L * 0.2; // Forward stack
+        group.add(stack1);
+
+        const stack2 = new THREE.Mesh(stackGeo, wireMaterial);
+        stack2.position.y = bridge.position.y + 1.2;
+        stack2.position.z = -L * 0.1; // Rear stack
+        group.add(stack2);
+
+        // 6. Masts (Front and Rear)
+        const mastGeo = new THREE.CylinderGeometry(0.05, 0.05, 4, 4);
+        
+        const mast1 = new THREE.Mesh(mastGeo, wireMaterial);
+        mast1.position.y = 3.5;
+        mast1.position.z = L * 0.45; // Front mast
+        group.add(mast1);
+
+        const mast2 = new THREE.Mesh(mastGeo, wireMaterial);
+        mast2.position.y = 3.5;
+        mast2.position.z = -L * 0.45; // Rear mast
+        group.add(mast2);
+
+
+        // Rotate whole group to align nicely in view
+        group.rotation.y = -Math.PI / 4; 
+        
+        return group;
+    }
+
+    function genIris() {
+        const mesh = new THREE.Mesh(new THREE.TorusKnotGeometry(3.5, 0.6, 100, 16), wireMaterial);
+        return mesh;
+    }
+
+    function genIris() {
+        const mesh = new THREE.Mesh(new THREE.TorusKnotGeometry(3.5, 0.6, 100, 16), wireMaterial);
+        return mesh;
+    }
+
+    function genOculus() {
+        const group = new THREE.Group();
+        const outer = new THREE.Mesh(new THREE.IcosahedronGeometry(4, 1), wireMaterial);
+        const inner = new THREE.Mesh(new THREE.SphereGeometry(1.5, 10, 10), new THREE.MeshBasicMaterial({ color: 0xFFFFFF, wireframe: true, transparent: true, opacity: 0.3 }));
+        group.add(outer);
+        group.add(inner);
+        return group;
+    }
+
+    function genYapper() {
+        const group = new THREE.Group();
+        for(let i=0; i<15; i++) {
+            const h = Math.random() * 6 + 2;
+            const bar = new THREE.Mesh(new THREE.BoxGeometry(0.5, h, 0.5), wireMaterial);
+            bar.position.x = (i - 7) * 1.2;
+            group.add(bar);
+        }
+        return group;
+    }
+
+    function genGithub() {
+        return new THREE.Mesh(new THREE.OctahedronGeometry(4, 0), wireMaterial);
+    }
+
+    function loadModel(type) {
+        if(currentMesh) {
+            scene.remove(currentMesh);
+            currentMesh.traverse((child) => {
+                if(child.geometry) child.geometry.dispose();
+            });
+        }
+
+        switch(type) {
+            case 'titanic': currentMesh = genTitanic(); break;
+            case 'iris': currentMesh = genIris(); break;
+            case 'oculus': currentMesh = genOculus(); break;
+            case 'yapper': currentMesh = genYapper(); break;
+            case 'github': currentMesh = genGithub(); break;
+            default: currentMesh = genTitanic();
+        }
+        
+        scene.add(currentMesh);
+    }
+
+    function animate() {
+        animationFrameId = requestAnimationFrame(animate);
+        if(currentMesh) {
+            // Distinct rotation for Titanic (it has a group rotation already, so we rotate the group)
+            currentMesh.rotation.y += 0.005; 
+        }
+        renderer.render(scene, camera);
+    }
+
+    loadModel('titanic');
+    animate();
+
+    const navItems = document.querySelectorAll('.nav-item');
+    const infoTitle = document.getElementById('info-title');
+    const infoDesc = document.getElementById('info-desc');
+
+    navItems.forEach(item => {
+        item.addEventListener('mouseenter', () => {
+            if(item.style.cursor === 'default') return; // Skip locked items
+            
+            navItems.forEach(n => n.classList.remove('active'));
+            item.classList.add('active');
+            
+            infoTitle.innerText = item.dataset.title;
+            infoDesc.innerText = item.dataset.desc;
+
+            loadModel(item.dataset.model);
+        });
+    });
+
+    window.addEventListener('resize', () => {
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+        const asp = w / h;
+        
+        camera.left = -d * asp;
+        camera.right = d * asp;
+        camera.top = d;
+        camera.bottom = -d;
+        camera.updateProjectionMatrix();
+        
+        renderer.setSize(w, h);
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,125 @@
+{% extends 'nerv/layout.html' %}
+{% load static %}
+
+
+{% block content %}
+<div class="program-container iris-container">
+  <h2 class="title-glow">IRIS</h2>
+
+  <div class="links-row">
+    {% if github_link %}
+    {% else %}
+    {% endif %}
+</div>
+  <div class="links-row">
+    {% if github_link %}
+      <a class="nerv-button github" href="{{github_link}}" target="_blank">GITHUB</a>
+    {% else %}
+      <span class="disabled-link">GitHub Repo</span>
+    {% endif %}
+    
+  </div>
+
+  <form id="iris-form" class="predict-form cyber-card" method="post" action="{% url 'nerv:iris' %}">
+    {% csrf_token %}
+    <div class="form-grid">
+      <div class="field last-field">{{ form.as_p }}</div>
+     
+    </div>
+
+    <div style="margin-top:20px;">
+    {% if prediction %}
+        <button type="button" id="clearBtnIris" class="cyber-btn btn-clear">
+            CLEAR FORM
+        </button>
+    {% else %}
+        <button type="submit" form="iris-form" id="predictBtnIris" class="cyber-btn decorated-btn">
+            <span class="btn-text">Predict</span>
+        </button>
+    {% endif %}
+</div>
+
+  </form>
+  <!-- RESULT OVERLAY HERE (outside the form) -->
+<div id="result-overlay" class="nerv-overlay hidden">
+    <div class="nerv-overlay-card">
+        <h2 id="result-title" style="cursor:pointer;"></h2>
+
+        <img id="result-image" class="nerv-overlay-img">
+        <p id="result-description" class="nerv-overlay-text"></p>
+        <button id="globalClearBtn" class="cyber-btn btn-clear">CLEAR</button>
+
+    </div>
+</div>
+    </div>
+  
+
+
+
+
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    // === CLEAR FORM BUTTON WHEN PREDICTION EXISTS ===
+    const irisClearBtn = document.getElementById("clearBtnIris");
+    const irisForm = document.getElementById("iris-form");
+
+    if (irisClearBtn && irisForm) {
+        irisClearBtn.addEventListener("click", () => {
+            irisForm.reset();
+            window.location.href = window.location.pathname;
+        });
+    }
+
+    console.log("IRIS Predict/Clear logic loaded.");
+
+    // === GLOBAL RESULT OVERLAY TRIGGER FOR IRIS ===
+    const predictionVal = "{{ prediction|default:''|escapejs }}";
+
+    if (predictionVal) {
+        const overlay = document.getElementById("result-overlay");
+        const title = document.getElementById("result-title");
+        const image = document.getElementById("result-image");
+        const desc = document.getElementById("result-description");
+
+        // Wikipedia links
+        const wikiLinks = {
+            "Setosa": "https://en.wikipedia.org/wiki/Iris_setosa",
+            "Versicolor": "https://en.wikipedia.org/wiki/Iris_versicolor",
+            "Virginica": "https://en.wikipedia.org/wiki/Iris_virginica"
+        };
+
+        // Fill overlay content
+        title.textContent = predictionVal;
+        const staticIrisPath = "{% static 'nerv/assets/iris/' %}";
+        image.src = staticIrisPath + predictionVal + ".png";
+
+        
+
+        overlay.classList.remove("hidden");
+
+        document.getElementById("globalClearBtn").onclick = () => {
+            window.location.href = window.location.pathname;
+        };
+
+        // === WHOLE CARD CLICKABLE EXCEPT CLEAR BUTTON ===
+        const card = document.querySelector(".nerv-overlay-card");
+        const clearBtn = document.getElementById("globalClearBtn");
+
+        card.addEventListener("click", (e) => {
+            if (e.target === clearBtn) return; // don't trigger on CLEAR
+
+            const url = wikiLinks[predictionVal];
+            if (url) window.open(url, "_blank");
+        });
+    }
+});
+</script>
+
+
+
+
+{% endblock %}

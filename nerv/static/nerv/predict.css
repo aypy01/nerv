@@ -1,0 +1,161 @@
+.predict-card {
+    margin-top: 20px;
+    background: rgba(0, 255, 0, 0.07);
+    border: 1px solid #ff4d00;
+    padding: 18px;
+    border-radius: 8px;
+    backdrop-filter: blur(6px);
+    color: #ff4d00;
+    font-family: monospace;
+    box-shadow: 0 0 12px #ff4d00;
+}
+
+.predict-header h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    text-shadow: 0 0 10px #ff4d00;
+    border-bottom: 1px solid #ff4d00;
+    padding-bottom: 6px;
+}
+
+.predict-body {
+    margin-top: 12px;
+}
+
+.predict-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.predict-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-shadow: 0 0 10px #ff4d00;
+}
+
+.predict-extra {
+    margin-top: 15px;
+    border-top: 1px dashed #ff4d00;
+    padding-top: 10px;
+}
+/* ================================
+   GLOBAL RESULT OVERLAY
+   For IRIS + OCULUS only
+================================ */
+
+.nerv-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(6px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.3s ease;
+}
+
+.nerv-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.nerv-overlay-card {
+        /* background: rgba(0, 0, 0, 0); */
+    /* border: 2px solid #0f0; */
+    /* box-shadow: 0 0 20px #0f0a; */
+    padding: 25px 30px;
+    width: 400px;
+    text-align: center;
+    border-radius: 1px;
+    /* animation: overlay-pop 0.28s ease-out; */
+}
+
+.nerv-overlay-card h2 {
+    color: #ff4d00;
+    margin-bottom: 15px;
+}
+
+.nerv-overlay-img {
+    
+    object-fit: contain;
+    margin: 10px 0;
+    width: 300px;
+    height: auto;
+    border-radius: 1px;
+    margin-bottom: 18px;
+    
+}
+
+.nerv-overlay-text {
+    color: #ff4d00;
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+/* ===============================
+   NERV RESULT OVERLAY (GLOBAL)
+   =============================== */
+
+.nerv-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(8, 255, 113, 0.05);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.2s ease;
+}
+
+
+.nerv-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.nerv-overlay-card {
+    background: transparent;
+    padding: 25px 30px;
+    width: 800px;
+    text-align: center;
+    border-radius: 2px;
+
+    
+}
+
+@keyframes overlay-pop {
+    0% {
+        transform: scale(0.85);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.nerv-overlay-card h2 {
+    color: #888888;
+    font-size: 1.7rem;
+    margin-bottom: 15px;
+    
+}
+
+
+
+.nerv-overlay-text {
+    color: #888888;
+    font-size: 1rem;
+    line-height: 1.4rem;
+    margin-bottom: 20px;
+}
+
+#globalClearBtn {
+    width: 100%;
+}
+

@@ -1,0 +1,114 @@
+{% extends 'nerv/layout.html' %}
+{% load static %}
+
+{% block content %}
+<div class="program-container">
+  <h2 class="title-glow">OCULUS</h2>
+
+  <div class="links-row">
+    {% if github_link %}
+      <a class="nerv-button github" href="{{github_link}}" target="_blank">GITHUB</a>
+    {% else %}
+      <span class="disabled-link">GitHub Repo</span>
+    {% endif %}
+    
+  </div>
+
+  <form id="program-form" class="predict-form"
+        action="{% url 'nerv:image_classification' %}"
+        method="post" enctype="multipart/form-data">
+
+    {% csrf_token %}
+
+    <!-- NOTICE BLOCK -->
+    <div class="statement">
+      <div class="statement-header">
+        <span>⚠</span> NERV NOTICE
+      </div>
+
+      <div class="statement-body">
+        <p class="statement-text">
+          This model is trained strictly on the <strong>CIFAR-10</strong> dataset.
+          Any uploaded image — even if unrelated — will be forced into one of the classes below.
+        </p>
+
+        <div class="statement-list">
+          <span>airplane</span>
+          <span>automobile</span>
+          <span>bird</span>
+          <span>cat</span>
+          <span>deer</span>
+          <span>dog</span>
+          <span>frog</span>
+          <span>horse</span>
+          <span>ship</span>
+          <span>truck</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="field last-field">{{ form.as_p }}</div>
+    </div>
+
+    <div style="margin-top:20px;">
+      {% if prediction %}
+        <button type="button" id="clearBtnGlobal" class="cyber-btn btn-clear">CLEAR FORM</button>
+      {% else %}
+        <button type="submit" id="predictBtnGlobal" class="cyber-btn decorated-btn">
+          <span class="btn-text">Predict</span>
+        </button>
+      {% endif %}
+    </div>
+
+  </form>
+
+  <!-- RESULT OVERLAY -->
+  <div id="result-overlay" class="nerv-overlay hidden">
+    <div class="nerv-overlay-card">
+      <h2 id="result-title" style="cursor:pointer;"></h2>
+      <img id="result-image" class="nerv-overlay-img">
+      <p id="result-description" class="nerv-overlay-text"></p>
+
+      <button id="globalClearBtn" class="cyber-btn btn-clear">CLEAR</button>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    // CLEAR FORM
+    const clearBtn = document.getElementById("clearBtnGlobal");
+    const form = document.getElementById("program-form");
+
+    if (clearBtn && form) {
+        clearBtn.addEventListener("click", () => {
+            form.reset();
+            window.location.href = window.location.pathname;
+        });
+    }
+
+    // RESULT OVERLAY
+    const predictionVal = "{{ prediction|default:''|escapejs }}";
+
+    if (predictionVal) {
+        const overlay = document.getElementById("result-overlay");
+        const title = document.getElementById("result-title");
+        const img = document.getElementById("result-image");
+
+        title.textContent = predictionVal.charAt(0).toUpperCase() + predictionVal.slice(1);
+
+        const staticPath = "{% static 'nerv/assets/oculus/' %}";
+        img.src = staticPath + predictionVal + ".png";
+
+        overlay.classList.remove("hidden");
+
+        document.getElementById("globalClearBtn").onclick = () => {
+            window.location.href = window.location.pathname;
+        };
+    }
+});
+</script>
+
+{% endblock %}

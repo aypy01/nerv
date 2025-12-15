@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>{% block title %}NERV{% endblock %}</title>
+    <!-- CSS is linked correctly -->
+    <link rel="stylesheet" href="{% static 'nerv/styles.css' %}">
+
+    <link rel="stylesheet" href="{% static 'nerv/predict.css' %}">
+
+    <!-- Font is linked correctly -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <aside class="sidebar" role="navigation" aria-label="Primary">
+        <!-- Sidebar Title (NERV) -->
+        <h2 class="sidebar-title"><a href="{% url 'nerv:index' %}" style="color:inherit;text-decoration:none;">NERV</a></h2>
+        <!-- Navigation Links -->
+        <ul class="sidebar-links">
+            <li><a href="{% url 'nerv:titanic' %}">TITANIC </a></li>
+            <li><a href="{% url 'nerv:iris' %}">IRIS</a></li>
+            <li><a href="{% url 'nerv:image_classification' %}">OCULUS</a></li>
+            <li><a href="{% url 'nerv:sentiments' %}">YAPPER</a></li>
+        </ul>
+
+        <footer class="sidebar-footer">
+            Built with<br>Django &amp; TensorFlow <br>by <a href="https://aypy01.github.io/" target="_blank" style="color:var(--eva-orange);font-weight:700;">AYPY</a>
+        </footer>
+    </aside>
+
+    <main class="main-content">
+        <!-- Content from child templates will be inserted here -->
+        {% block content %}{% endblock %}
+    </main>
+
+    
+
+    <!-- Shared UI behavior JS is loaded from the external static file -->
+    <script src="{% static 'nerv/styles.js' %}"></script>
+
+    <!-- Block for page-specific JavaScript -->
+    {% block scripts %}{% endblock %}
+</body>
+</html>
