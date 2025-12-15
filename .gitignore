@@ -1,4 +1,18 @@
+# Local ignores
 db.sqlite3
 __pycache__/
 .env
 *.pyc
+.vscode/
+
+# Global/standard Python/Django ignores (optional, keep for safety)
+*.so
+*.egg-info/
+*.log
+local_settings.py
+db.sqlite3-journal
+*.ipynb_checkpoints
+.venv/
+env/
+*.manifest
+*.spec
