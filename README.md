@@ -1,4 +1,8 @@
 # NERV - Neural Experiments & Real-world Validation
+![TensorFlow](https://img.shields.io/badge/TensorFlow-FF6F00?logo=tensorflow&logoColor=white)
+![Django](https://img.shields.io/badge/Django-092E20?logo=django&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
+
 <p align="left">
   <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&duration=3500&pause=500&color=00FF80&center=false&vCenter=false&width=520&lines=Titanic:+Predicts+Passenger+Survival;Iris:+Classifies+Species+from+4+Features;Oculus:+CNN+Across+10+CIFAR-10+Objects;Yapper:+NLP+Sentiment+Using+BiLSTM" alt="Typing SVG" />
 </p>
@@ -81,20 +85,18 @@ These models demonstrate classical tabular ML workflows:
 
 ---
 
-## Attribution & Acknowledgements
 
-This project would not exist without strong foundational learning resources.
+## Credits & Acknowledgements
+- [David J. Malan](https://github.com/dmalan) — CS50 instructor
+- [Brian Yu](https://github.com/brianyu28) — CS50 Web
+- [TensorFlow](https://github.com/tensorflow/tensorflow) — Model training & inference
+- [Django](https://github.com/django/django) — Backend & web integration
+- [CS50](https://cs50.harvard.edu/) — Computer science foundations
+- [scikit-learn](https://github.com/scikit-learn/scikit-learn) — Classical ML utilities
+- [Google Colab](https://colab.research.google.com/) — Experimentation & prototyping
+- ChatGPT — Debugging, documentation
+- GitHub Copilot — Code assistance
 
-- **TensorFlow & Google** — for the framework and tooling that made model training accessible and scalable  
-- **CS50 (Harvard University)** — for instilling rigorous problem-solving and system-level thinking  
-- **David J. Malan** — for teaching clarity, discipline, and respect for fundamentals in computer science
-- brian yu CS50 Web
-- google Colab
-- ChatGpt
-- Gemini
-
-> Strong abstractions are built on strong fundamentals.  
-> This repository is a direct outcome of learning things the *right* way.
 
 ---
 
