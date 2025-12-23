@@ -67,7 +67,7 @@ These models demonstrate classical tabular ML workflows:
 
 ---
 
-### Yapper — Sentiment Analysis(NLP)
+### Yapper   Sentiment Analysis(NLP)
 - Powered by `sentiments.keras`
 - IMDb review classification
 - Text vectorization + embedding-based neural network
@@ -87,15 +87,15 @@ These models demonstrate classical tabular ML workflows:
 
 
 ## Credits & Acknowledgements
-- [David J. Malan](https://github.com/dmalan) — CS50 instructor
-- [Brian Yu](https://github.com/brianyu28) — CS50 Web
-- [TensorFlow](https://github.com/tensorflow/tensorflow) — Model training & inference
-- [Django](https://github.com/django/django) — Backend & web integration
-- [CS50](https://cs50.harvard.edu/) — Computer science foundations
-- [scikit-learn](https://github.com/scikit-learn/scikit-learn) — Classical ML utilities
-- [Google Colab](https://colab.research.google.com/) — Experimentation & prototyping
-- ChatGPT — Debugging, documentation
-- GitHub Copilot — Code assistance
+- [David J. Malan](https://github.com/dmalan)   CS50 instructor
+- [Brian Yu](https://github.com/brianyu28)   CS50 Web
+- [TensorFlow](https://github.com/tensorflow/tensorflow)   Model training & inference
+- [Django](https://github.com/django/django)   Backend & web integration
+- [CS50](https://cs50.harvard.edu/)   Computer science foundations
+- [scikit-learn](https://github.com/scikit-learn/scikit-learn)   Classical ML utilities
+- [Google Colab](https://colab.research.google.com/)   Experimentation & prototyping
+- ChatGPT   Debugging, documentation
+- GitHub Copilot   Code assistance
 
 
 ---
