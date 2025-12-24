@@ -24,4 +24,5 @@ urlpatterns = [
     path("favicon.ico", RedirectView.as_view(url=settings.STATIC_URL + "favicon.ico")),
     path("admin/", admin.site.urls),
     path('nerv/', include('nerv.urls')),
+    path('', RedirectView.as_view(url='/nerv/', permanent=True)),
 ]

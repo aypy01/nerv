@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
+
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,7 +27,13 @@ SECRET_KEY = "django-insecure-z3df4m@go28(y&ws%!y+4mm*++q)y$nsnkr%q2=s(bqytnrn!$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['nerv-dmii.onrender.com']
+ALLOWED_HOSTS = ["*"]
+
+
+
+# Base URL for your site (used in templates, redirects, etc.)
+SITE_URL = os.getenv("SITE_URL", "http://localhost:8000")
+
 
 
 # Application definition
@@ -121,6 +129,8 @@ STATIC_URL = "/static/"
 # Include the project-level `static/` directory so files placed at
 # `<BASE_DIR>/static/` are served at `/static/...` during development.
 STATICFILES_DIRS = [BASE_DIR / "static"]
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
