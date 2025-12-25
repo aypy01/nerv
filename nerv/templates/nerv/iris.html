@@ -95,9 +95,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // Fill overlay content
         title.textContent = predictionVal;
         const staticIrisPath = "{% static 'nerv/assets/iris/' %}";
-        image.src = staticIrisPath + predictionVal + ".png";
-
-        
+        image.src = staticIrisPath + predictionVal.toLowerCase() + ".png";
+      
 
         overlay.classList.remove("hidden");
 
