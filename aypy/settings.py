@@ -2,8 +2,12 @@ import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "your-fallback-key")
-DEBUG = False # Set to False for Vercel
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-local-key")
+
+# For Railway, we want to see errors if it fails initially, then set to False
+DEBUG = os.environ.get("DEBUG", "False") == "True"
+
+# Railway uses specific domains; '*' is okay for the initial launch
 ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
@@ -18,7 +22,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware", # MUST BE HERE
+    "whitenoise.middleware.WhiteNoiseMiddleware", 
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -30,7 +34,6 @@ MIDDLEWARE = [
 ROOT_URLCONF = "aypy.urls"
 WSGI_APPLICATION = "aypy.wsgi.application"
 
-# Database - Note: SQLite will reset every time you redeploy on Vercel
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -38,17 +41,20 @@ DATABASES = {
     }
 }
 
-# Static Files - Critical for Vercel
+# Static Files Setup
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+# Important for Railway/HTTPS
+CSRF_TRUSTED_ORIGINS = ["https://*.railway.app"]
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, 'templates')], # Tells Django where to look for project-level templates
-        "APP_DIRS": True, # Tells Django to look inside each app's "templates" folder
+        "DIRS": [os.path.join(BASE_DIR, 'templates')],
+        "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
@@ -59,3 +65,5 @@ TEMPLATES = [
         },
     },
 ]
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
