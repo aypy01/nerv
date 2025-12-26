@@ -7,9 +7,11 @@
   <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&duration=3500&pause=500&color=00FF80&center=false&vCenter=false&width=520&lines=Titanic:+Predicts+Passenger+Survival;Iris:+Classifies+Species+from+4+Features;Oculus:+CNN+Across+10+CIFAR-10+Objects;Yapper:+NLP+Sentiment+Using+BiLSTM" alt="Typing SVG" />
 </p>
 
+![NERV Banner](NERV.png)
 
 NERV is an applied machine learning project that brings trained TensorFlow models into a practical, deployable workflow.  
 This repository focuses on **using**, **integrating**, and **evaluating** models that were originally trained and validated in my dedicated TensorFlow learning repository.
+As a **self-taught programmer**, I built this project to challenge myself and bridge the gap between AI theory and web deployment. What started as a month-long deep dive into the CS50/TensorFlow stack is now a functional, deployed application on Railway.
 
 
 ---
