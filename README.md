@@ -3,6 +3,12 @@
 ![Django](https://img.shields.io/badge/Django-092E20?logo=django&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
 
+### WEBSITE:
+
+> [![NERV Website](https://img.shields.io/badge/NERV_WEBSITE-CLICK_HERE-FF8C00?style=flat-square&logo=tensorflow&logoColor=FFFFFF&labelColor=000000)](https://web-production-6533e.up.railway.app/nerv/)
+> <br>
+
+
 <p align="left">
   <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&duration=3500&pause=500&color=00FF80&center=false&vCenter=false&width=520&lines=Titanic:+Predicts+Passenger+Survival;Iris:+Classifies+Species+from+4+Features;Oculus:+CNN+Across+10+CIFAR-10+Objects;Yapper:+NLP+Sentiment+Using+BiLSTM" alt="Typing SVG" />
 </p>
