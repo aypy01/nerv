@@ -153,17 +153,12 @@ Think of the docs as a guided walkthrough, not just reference material.
 ---
 
 ## Note:
-
-NERV is not about experimenting blindly.  
+- The Motivation
+> NERV was born during a period of professional transition. After leaving my previous role, I decided to bridge my knowledge from CS50 AI and CS50 Web. I realized that while many people can train a model, very few know how to give that model a "home" in a real application.
+I built this to challenge myself: to take "invisible" Python scripts and turn them into a visible, interactive system. If this project helps even one learner understand how to connect AI to the web, then the mission is accomplished.
+> 
+> NERV is not about experimenting blindly.  
 It is about **applying trained intelligence correctly**.
-
-Models are treated as:
-- Versioned artifacts
-- Measurable components
-- Replaceable, improvable systems
-
-Training is iterative.  
-Deployment is deliberate.
 
 ---
 
