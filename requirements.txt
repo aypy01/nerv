@@ -3,3 +3,4 @@ gunicorn
 whitenoise
 numpy
 tensorflow-cpu
+Pillow
